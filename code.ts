@@ -13,8 +13,13 @@ class BrokenNodes {
     });
     this.found.clear();
     for (const node of instances) {
+      const parent =
+        node.mainComponent?.parent?.type === "COMPONENT_SET"
+          ? node.mainComponent.parent.parent
+          : node.mainComponent;
+
       // component has no parent and is not part of an external library
-      if (!node.mainComponent?.parent && !node.mainComponent?.remote) {
+      if (!parent && !node.mainComponent?.remote) {
         // if (!node.mainComponent?.parent) {
         this.found.set(node.id, node);
       }
