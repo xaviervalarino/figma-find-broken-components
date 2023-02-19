@@ -3,6 +3,7 @@ figma.showUI(__html__, { width: 400, height: 500 });
 const potentiallyBrokenNodes: Map<string, InstanceNode> = new Map();
 
 function getTopMostParent(node: BaseNode & ChildrenMixin) {
+  potentiallyBrokenNodes.clear()
   let parent = node.parent;
   while (parent && parent.parent && parent.parent.type !== "PAGE") {
     parent = parent.parent;
