@@ -2,7 +2,7 @@ figma.showUI(__html__, { width: 400, height: 500 });
 
 const potentiallyBrokenNodes: Map<string, InstanceNode> = new Map();
 
-function getTopMostParentName(node: BaseNode & ChildrenMixin) {
+function getTopMostParent(node: BaseNode & ChildrenMixin) {
   let parent = node.parent;
   while (parent && parent.parent && parent.parent.type !== "PAGE") {
     parent = parent.parent;
@@ -24,7 +24,7 @@ figma.ui.onmessage = (msg) => {
     }
     const found = [];
     for (const [id, node] of potentiallyBrokenNodes) {
-      const parentName = getTopMostParentName(node)?.name;
+      const parentName = getTopMostParent(node)?.name;
       const name = parentName ? `${parentName} / ${node.name}` : node.name;
       found.push([id, name]);
     }
