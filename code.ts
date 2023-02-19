@@ -56,6 +56,13 @@ figma.on("selectionchange", () => {
   figma.ui.postMessage({ type: "selectionchange" });
 });
 
+figma.on("documentchange", () => {
+  console.log("doc change");
+  brokenNodes.find();
+  figma.ui.postMessage({ type: "user-action" });
+  sendUpdatedList(brokenNodes.all);
+});
+
 figma.on("currentpagechange", () => {
   brokenNodes.find();
   figma.ui.postMessage({ type: "user-action" });
