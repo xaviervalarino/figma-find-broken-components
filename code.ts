@@ -15,7 +15,8 @@ function findBrokenNodes() {
       types: ["INSTANCE"],
     });
     for (let node of instanceNodes) {
-      if (!node.mainComponent?.parent) {
+      // component has no parent and is not part of an external library
+      if (!node.mainComponent?.parent && !node.mainComponent?.remote) {
         potentiallyBrokenNodes.set(node.id, node);
       }
     }
