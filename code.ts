@@ -10,6 +10,11 @@ function getTopMostParent(node: BaseNode & ChildrenMixin) {
   return parent;
 }
 
+figma.on('currentpagechange', () => {
+  potentiallyBrokenNodes.clear()
+  figma.ui.postMessage({ type: "found", found: [] });
+});
+
 figma.ui.onmessage = (msg) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
