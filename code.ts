@@ -11,34 +11,35 @@ function getTopMostParent(node: BaseNode & ChildrenMixin) {
 }
 
 function findBrokenNodes() {
-    const instanceNodes = figma.currentPage.findAllWithCriteria<"INSTANCE"[]>({
-      types: ["INSTANCE"],
-    });
-    for (let node of instanceNodes) {
-      // component has no parent and is not part of an external library
-      if (!node.mainComponent?.parent && !node.mainComponent?.remote) {
-        potentiallyBrokenNodes.set(node.id, node);
-      }
+  const instanceNodes = figma.currentPage.findAllWithCriteria<"INSTANCE"[]>({
+    types: ["INSTANCE"],
+  });
+  for (const node of instanceNodes) {
+    // component has no parent and is not part of an external library
+    if (!node.mainComponent?.parent && !node.mainComponent?.remote) {
+    // if (!node.mainComponent?.parent) {
+      potentiallyBrokenNodes.set(node.id, node);
     }
-    const found = [];
-    for (const [id, node] of potentiallyBrokenNodes) {
-      const parentName = getTopMostParent(node)?.name;
-      const name = parentName ? `${parentName} → ${node.name}` : node.name;
-      found.push([id, name]);
-    }
-    figma.ui.postMessage({ type: "found", found });
+  }
+  const found = [];
+  for (const [id, node] of potentiallyBrokenNodes) {
+    const parentName = getTopMostParent(node)?.name;
+    const name = parentName ? `${parentName} → ${node.name}` : node.name;
+    found.push([id, name]);
+  }
+  figma.ui.postMessage({ type: "found", found });
 }
 
-findBrokenNodes()
+findBrokenNodes();
 
-figma.on('currentpagechange', () => {
-  potentiallyBrokenNodes.clear()
-  findBrokenNodes()
-})
+figma.on("currentpagechange", () => {
+  potentiallyBrokenNodes.clear();
+  findBrokenNodes();
+});
 
-figma.on('selectionchange', () => {
-  figma.ui.postMessage({ type: 'selectionchange'})
-})
+figma.on("selectionchange", () => {
+  figma.ui.postMessage({ type: "selectionchange" });
+});
 
 figma.ui.onmessage = (msg) => {
   if (msg.type === "go-to-broken") {
@@ -46,7 +47,7 @@ figma.ui.onmessage = (msg) => {
     figma.viewport.scrollAndZoomIntoView([node]);
     figma.currentPage.selection = [node];
   }
-  if (msg.type === 'refresh') {
-    findBrokenNodes()
+  if (msg.type === "refresh") {
+    findBrokenNodes();
   }
 };
