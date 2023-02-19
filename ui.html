@@ -1,0 +1,29 @@
+<button id="find">Find</button>
+<ul id="list"></ul>
+
+<script>
+  document.getElementById("find").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "find-broken" } }, "*");
+  };
+
+  onmessage = (event) => {
+    const { type, found } = event.data.pluginMessage;
+    if (type === "found") {
+      const listItems = found.map(([id, name]) => {
+        const li = document.createElement("li");
+        const button = document.createElement("button");
+        button.textContent = "Go to";
+        button.onclick = () => {
+          parent.postMessage(
+            { pluginMessage: { type: "go-to-broken", id: id } },
+            "*"
+          );
+        };
+        li.textContent = name;
+        li.appendChild(button);
+        return li;
+      });
+      document.getElementById("list").replaceChildren(...listItems);
+    }
+  };
+</script>
