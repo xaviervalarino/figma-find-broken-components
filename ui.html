@@ -32,7 +32,7 @@
     if (type === "found") {
       setTimeout(() => {
         loading.style.display = "none";
-      }, 200)
+      }, 300)
       const listItems = found.map(([id, name]) => {
         const li = document.createElement("li");
         const div = document.createElement("div");
@@ -48,7 +48,7 @@
           // super janky---this is so that the focus event doesn't undo this
           setTimeout(() => {
             li.style.background = "lightblue";
-          }, 300);
+          }, 200);
         };
         div.textContent = name;
         div.style = "display: flex; justify-content: space-between";
