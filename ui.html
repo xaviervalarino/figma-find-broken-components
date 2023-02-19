@@ -8,9 +8,9 @@
   onmessage = (event) => {
     const { type, found } = event.data.pluginMessage;
 
-    if (type === 'selectionchange') {
+    if (type === "selectionchange") {
       for (const li of list.children) {
-        li.style.background = ''
+        li.style.background = "";
       }
     }
 
@@ -30,7 +30,7 @@
           // super janky---this is so that the focus event doesn't undo this
           setTimeout(() => {
             li.style.background = "lightblue";
-          }, 100)
+          }, 100);
         };
         div.textContent = name;
         div.style = "display: flex; justify-content: space-between";
