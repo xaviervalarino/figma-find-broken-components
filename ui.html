@@ -2,10 +2,6 @@
 <ul id="list"></ul>
 
 <script>
-  document.getElementById("find").onclick = () => {
-    parent.postMessage({ pluginMessage: { type: "find-broken" } }, "*");
-  };
-
   onmessage = (event) => {
     const { type, found } = event.data.pluginMessage;
     if (type === "found") {
@@ -23,6 +19,7 @@
         li.appendChild(button);
         return li;
       });
+      if (!listItems.length) listItems.push("🎉 No broken components");
       document.getElementById("list").replaceChildren(...listItems);
     }
   };

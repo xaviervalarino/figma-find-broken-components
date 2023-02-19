@@ -10,15 +10,7 @@ function getTopMostParent(node: BaseNode & ChildrenMixin) {
   return parent;
 }
 
-figma.on('currentpagechange', () => {
-  potentiallyBrokenNodes.clear()
-  figma.ui.postMessage({ type: "found", found: [] });
-});
-
-figma.ui.onmessage = (msg) => {
-  // One way of distinguishing between different types of messages sent from
-  // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === "find-broken") {
+function findBrokenNodes() {
     const instanceNodes = figma.currentPage.findAllWithCriteria<"INSTANCE"[]>({
       types: ["INSTANCE"],
     });
@@ -34,7 +26,16 @@ figma.ui.onmessage = (msg) => {
       found.push([id, name]);
     }
     figma.ui.postMessage({ type: "found", found });
-  }
+}
+
+findBrokenNodes()
+
+figma.on('currentpagechange', () => {
+  potentiallyBrokenNodes.clear()
+  findBrokenNodes()
+})
+
+figma.ui.onmessage = (msg) => {
   if (msg.type === "go-to-broken") {
     const node = <InstanceNode>potentiallyBrokenNodes.get(msg.id);
     figma.viewport.scrollAndZoomIntoView([node]);
