@@ -1,10 +1,37 @@
 <div style="font-family: sans-serif">
-  <h4>Found on Current Page</h4>
-  <ul id="list" style="padding-left: 0"></ul>
+  <div
+    style="
+      display: flex;
+      padding: 8px;
+      justify-content: space-between;
+      align-items: center;
+    "
+  >
+    <h4 style="margin: 0">Found on Current Page</h4>
+    <button
+      id="refresh"
+      style="
+        background: navy;
+        font-weight: bold;
+        color: white;
+        border: 0;
+        border-radius: 3px;
+        padding: 8px;
+      "
+    >
+      refresh
+    </button>
+  </div>
+  <ul id="list" style="padding-left: 0; list-style-type: none"></ul>
 </div>
 
 <script>
-  const list = document.getElementById("list")
+  const list = document.getElementById("list");
+
+  document.getElementById("refresh").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "refresh" } }, "*");
+  };
+
   onmessage = (event) => {
     const { type, found } = event.data.pluginMessage;
 
@@ -20,7 +47,7 @@
         const div = document.createElement("div");
         const button = document.createElement("button");
 
-        li.style = "padding: 8px; border-bottom: 1px solid rgba(10,10,10,0.1)";
+        li.style = "padding: 8px; border-top: 1px solid rgba(10,10,10,0.1)";
         button.textContent = "Go to";
         button.onclick = () => {
           parent.postMessage(

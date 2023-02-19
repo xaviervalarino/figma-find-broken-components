@@ -45,4 +45,7 @@ figma.ui.onmessage = (msg) => {
     figma.viewport.scrollAndZoomIntoView([node]);
     figma.currentPage.selection = [node];
   }
+  if (msg.type === 'refresh') {
+    findBrokenNodes()
+  }
 };
