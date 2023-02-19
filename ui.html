@@ -7,6 +7,13 @@
   const list = document.getElementById("list")
   onmessage = (event) => {
     const { type, found } = event.data.pluginMessage;
+
+    if (type === 'selectionchange') {
+      for (const li of list.children) {
+        li.style.background = ''
+      }
+    }
+
     if (type === "found") {
       const listItems = found.map(([id, name]) => {
         const li = document.createElement("li");
@@ -20,6 +27,10 @@
             { pluginMessage: { type: "go-to-broken", id: id } },
             "*"
           );
+          // super janky---this is so that the focus event doesn't undo this
+          setTimeout(() => {
+            li.style.background = "lightblue";
+          }, 100)
         };
         div.textContent = name;
         div.style = "display: flex; justify-content: space-between";

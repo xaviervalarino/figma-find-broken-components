@@ -35,6 +35,10 @@ figma.on('currentpagechange', () => {
   findBrokenNodes()
 })
 
+figma.on('selectionchange', () => {
+  figma.ui.postMessage({ type: 'selectionchange'})
+})
+
 figma.ui.onmessage = (msg) => {
   if (msg.type === "go-to-broken") {
     const node = <InstanceNode>potentiallyBrokenNodes.get(msg.id);
