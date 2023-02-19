@@ -22,7 +22,7 @@ function findBrokenNodes() {
     const found = [];
     for (const [id, node] of potentiallyBrokenNodes) {
       const parentName = getTopMostParent(node)?.name;
-      const name = parentName ? `${parentName} / ${node.name}` : node.name;
+      const name = parentName ? `${parentName} → ${node.name}` : node.name;
       found.push([id, name]);
     }
     figma.ui.postMessage({ type: "found", found });
