@@ -1,13 +1,19 @@
-<button id="find">Find</button>
-<ul id="list"></ul>
+<div style="font-family: sans-serif">
+  <h4>Found on Current Page</h4>
+  <ul id="list" style="padding-left: 0"></ul>
+</div>
 
 <script>
+  const list = document.getElementById("list")
   onmessage = (event) => {
     const { type, found } = event.data.pluginMessage;
     if (type === "found") {
       const listItems = found.map(([id, name]) => {
         const li = document.createElement("li");
+        const div = document.createElement("div");
         const button = document.createElement("button");
+
+        li.style = "padding: 8px; border-bottom: 1px solid rgba(10,10,10,0.1)";
         button.textContent = "Go to";
         button.onclick = () => {
           parent.postMessage(
@@ -15,12 +21,14 @@
             "*"
           );
         };
-        li.textContent = name;
-        li.appendChild(button);
+        div.textContent = name;
+        div.style = "display: flex; justify-content: space-between";
+        div.appendChild(button);
+        li.appendChild(div);
         return li;
       });
       if (!listItems.length) listItems.push("🎉 No broken components");
-      document.getElementById("list").replaceChildren(...listItems);
+      list.replaceChildren(...listItems);
     }
   };
 </script>
