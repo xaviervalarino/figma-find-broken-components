@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": ["es6"],
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "noEmitHelpers": false,
     "strict": true,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@figma"
-    ]
-  }
+    "lib": ["es6", "dom"],
+    "typeRoots": ["./node_modules/@types", "./node_modules/@figma"]
+  },
+  "include": ["./src/**/*"]
 }

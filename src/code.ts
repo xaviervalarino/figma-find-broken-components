@@ -29,8 +29,8 @@ class BrokenNodes {
     this.brokenComponents = new Map();
     this.collection = new Map();
   }
-  #createInstanceName(node: InstanceNode) {
-    const parentName = getTopMostParentOfType(node, "PAGE", true)?.name;
+  createInstanceName(node: InstanceNode) {
+    const parentName = getTopMostAncestor(node, "PAGE", true)?.name;
     return parentName ? `${parentName} → ${node.name}` : node.name;
   }
   find() {
@@ -54,7 +54,7 @@ class BrokenNodes {
         }
         this.collection.get(mainComponent.name)!.push({
           id: node.id,
-          txt: this.#createInstanceName(node),
+          txt: this.createInstanceName(node),
         });
       }
     }
@@ -71,31 +71,33 @@ class BrokenNodes {
   }
 }
 
-function sendUpdatedList(found: List) {
-  figma.ui.postMessage({ type: "found", found });
-}
-
 // init
 const brokenNodes = new BrokenNodes();
-brokenNodes.find();
-sendUpdatedList(brokenNodes.found);
+
+function getUpdatedList() {
+  // jank masters
+  setTimeout(() => {
+    brokenNodes.find()
+    figma.ui.postMessage({ type: "found", found: brokenNodes.found });
+  }, 500)
+}
+getUpdatedList()
 
 // listeners
 figma.on("selectionchange", () => {
-  figma.ui.postMessage({ type: "selectionchange" });
+  const selection =  figma.currentPage.selection.map(({id}) => id);
+  figma.ui.postMessage({ type: "selectionchange", selection: selection });
 });
 
 figma.on("documentchange", () => {
   console.log("doc change");
-  brokenNodes.find();
   figma.ui.postMessage({ type: "user-action" });
-  sendUpdatedList(brokenNodes.found);
+  getUpdatedList();
 });
 
 figma.on("currentpagechange", () => {
-  brokenNodes.find();
   figma.ui.postMessage({ type: "user-action" });
-  sendUpdatedList(brokenNodes.found);
+  getUpdatedList();
 });
 
 figma.ui.onmessage = (msg) => {
@@ -108,7 +110,6 @@ figma.ui.onmessage = (msg) => {
   }
 
   if (msg.type === "refresh") {
-    brokenNodes.find();
-    sendUpdatedList(brokenNodes.found);
+    getUpdatedList();
   }
 };
