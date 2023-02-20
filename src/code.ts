@@ -79,7 +79,7 @@ function getUpdatedList() {
   setTimeout(() => {
     brokenNodes.find()
     figma.ui.postMessage({ type: "found", found: brokenNodes.found });
-  }, 500)
+  }, 100)
 }
 getUpdatedList()
 
