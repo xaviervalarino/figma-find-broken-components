@@ -1,84 +1,16 @@
+import BrokenInstances from "./modules/broken-instances";
 figma.showUI(__html__, { width: 500, height: 500 });
 
 console.clear();
 
-type Instance = { id: string; txt: string };
-interface List {
-  [key: string]: Instance[];
-}
-
-function getTopMostAncestor(
-  node: BaseNode & ChildrenMixin,
-  type: NodeType,
-  before = false
-) {
-  let next = node;
-  let traverse = true;
-
-  while (next.parent && traverse) {
-    traverse = before ? next.parent.type !== type : next.type !== type;
-    if (traverse) next = next.parent;
-  }
-  return next;
-}
-
-class BrokenNodes {
-  brokenComponents: Map<string, InstanceNode>;
-  collection: Map<string, Instance[]>;
-  constructor() {
-    this.brokenComponents = new Map();
-    this.collection = new Map();
-  }
-  createInstanceName(node: InstanceNode) {
-    const parentName = getTopMostAncestor(node, "PAGE", true)?.name;
-    return parentName ? `${parentName} → ${node.name}` : node.name;
-  }
-  find() {
-    const instances = figma.currentPage.findAllWithCriteria<"INSTANCE"[]>({
-      types: ["INSTANCE"],
-    });
-    this.brokenComponents.clear();
-    this.collection.clear();
-    for (const node of instances) {
-      const mainComponent =
-        node.mainComponent?.parent?.type === "COMPONENT_SET"
-          ? node.mainComponent.parent
-          : node.mainComponent;
-
-      // component has no parent and is not part of an external library
-      if (mainComponent && !mainComponent.parent && !mainComponent.remote) {
-        // if (!node.mainComponent?.parent) {
-        this.brokenComponents.set(node.id, node);
-        if (!this.collection.has(mainComponent.name)) {
-          this.collection.set(mainComponent.name, []);
-        }
-        this.collection.get(mainComponent.name)!.push({
-          id: node.id,
-          txt: this.createInstanceName(node),
-        });
-      }
-    }
-  }
-  instance(id: string) {
-    return this.brokenComponents.get(id);
-  }
-  get found() {
-    const list: List = {};
-    for (const [componentName, instances] of this.collection) {
-      list[componentName] = instances;
-    }
-    return list;
-  }
-}
-
 // init
-const brokenNodes = new BrokenNodes();
+const brokenInstances = new BrokenInstances();
 
 function getUpdatedList() {
   // jank masters
   setTimeout(() => {
-    brokenNodes.find()
-    figma.ui.postMessage({ type: "found", found: brokenNodes.found });
+    brokenInstances.find()
+    figma.ui.postMessage({ type: "found", found: brokenInstances.found });
   }, 100)
 }
 getUpdatedList()
@@ -102,7 +34,7 @@ figma.on("currentpagechange", () => {
 
 figma.ui.onmessage = (msg) => {
   if (msg.type === "go-to-broken") {
-    const node = brokenNodes.instance(msg.id);
+    const node = brokenInstances.instance(msg.id);
     if (node) {
       figma.viewport.scrollAndZoomIntoView([node]);
       figma.currentPage.selection = [node];
