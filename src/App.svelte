@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { GlobalCSS } from "figma-plugin-ds-svelte";
   import List from "./components/List.svelte";
 </script>
 
