@@ -7,6 +7,21 @@ interface List {
   [key: string]: Instance[];
 }
 
+function getTopMostAncestor(
+  node: BaseNode & ChildrenMixin,
+  type: NodeType,
+  before = false
+) {
+  let next = node;
+  let traverse = true;
+
+  while (next.parent && traverse) {
+    traverse = before ? next.parent.type !== type : next.type !== type;
+    if (traverse) next = next.parent;
+  }
+  return next;
+}
+
 class BrokenNodes {
   brokenComponents: Map<string, InstanceNode>;
   collection: Map<string, Instance[]>;
@@ -14,15 +29,8 @@ class BrokenNodes {
     this.brokenComponents = new Map();
     this.collection = new Map();
   }
-  #getTopMostParent(node: BaseNode & ChildrenMixin) {
-    let parent = node.parent;
-    while (parent && parent.parent && parent.parent.type !== "PAGE") {
-      parent = parent.parent;
-    }
-    return parent;
-  }
   #createInstanceName(node: InstanceNode) {
-    const parentName = this.#getTopMostParent(node)?.name;
+    const parentName = getTopMostParentOfType(node, "PAGE", true)?.name;
     return parentName ? `${parentName} → ${node.name}` : node.name;
   }
   find() {
@@ -42,7 +50,7 @@ class BrokenNodes {
         // if (!node.mainComponent?.parent) {
         this.brokenComponents.set(node.id, node);
         if (!this.collection.has(mainComponent.name)) {
-          this.collection.set(mainComponent.name, [])
+          this.collection.set(mainComponent.name, []);
         }
         this.collection.get(mainComponent.name)!.push({
           id: node.id,
