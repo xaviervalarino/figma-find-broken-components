@@ -10,7 +10,7 @@
     <h4 style="margin: 0">Found on Current Page</h4>
   </div>
   <div id="loading" style="display: block">Loading...</div>
-  <ul id="list" style="padding-left: 0; list-style-type: none"></ul>
+  <div id="list" style="padding-left: 0; list-style-type: none"></div>
 </div>
 
 <script>
@@ -24,7 +24,7 @@
       loading.style.display = "block";
     }
     if (type === "selectionchange") {
-      for (const li of list.children) {
+      for (const li of list.querySelectorAll("li")) {
         li.style.background = "";
       }
     }
@@ -32,32 +32,56 @@
     if (type === "found") {
       setTimeout(() => {
         loading.style.display = "none";
-      }, 300)
-      const listItems = found.map(([id, name]) => {
-        const li = document.createElement("li");
-        const div = document.createElement("div");
-        const button = document.createElement("button");
+      }, 300);
 
-        li.style = "padding: 8px; border-top: 1px solid rgba(10,10,10,0.1)";
-        button.textContent = "Go to";
-        button.onclick = () => {
-          parent.postMessage(
-            { pluginMessage: { type: "go-to-broken", id: id } },
-            "*"
-          );
-          // super janky---this is so that the focus event doesn't undo this
-          setTimeout(() => {
-            li.style.background = "lightblue";
-          }, 200);
-        };
-        div.textContent = name;
-        div.style = "display: flex; justify-content: space-between";
-        div.appendChild(button);
-        li.appendChild(div);
-        return li;
-      });
-      if (!listItems.length) listItems.push("🎉 No broken components");
-      list.replaceChildren(...listItems);
+      const listOfComponents = [];
+
+      for (const [mainComponent, instances] of Object.entries(found)) {
+        const componentList = document.createElement("details");
+        const summary = document.createElement("summary");
+        const summaryContent = document.createElement('div')
+        const span = document.createElement("span");
+        const ul = document.createElement("ul");
+
+        const listItems = instances.map(({ id, txt }) => {
+          const li = document.createElement("li");
+          const div = document.createElement("div");
+          const button = document.createElement("button");
+
+          li.style = "padding: 8px; border-top: 1px solid rgba(10,10,10,0.1)";
+          button.textContent = "Go to";
+          button.onclick = () => {
+            parent.postMessage(
+              { pluginMessage: { type: "go-to-broken", id: id } },
+              "*"
+            );
+            // super janky---this is so that the focus event doesn't undo this
+            setTimeout(() => {
+              li.style.background = "lightblue";
+            }, 200);
+          };
+          div.textContent = txt;
+          div.style = "display: flex; justify-content: space-between";
+          div.appendChild(button);
+          li.appendChild(div);
+          return li;
+        });
+        summaryContent.style =
+          "display: flex; justify-content: space-between; padding: 8px 2px";
+        span.style =
+          "background: salmon; padding: 2px 8px; border-radius: 50px;";
+        ul.replaceChildren(...listItems);
+        summaryContent.textContent = mainComponent;
+        span.textContent = instances.length;
+        summaryContent.appendChild(span);
+        summary.appendChild(summaryContent)
+        componentList.replaceChildren(summary, ul);
+        listOfComponents.push(componentList);
+      }
+
+      if (!listOfComponents.length)
+        listOfComponents.push("🎉 No broken components");
+      list.replaceChildren(...listOfComponents);
     }
   };
 </script>

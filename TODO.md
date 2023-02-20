@@ -3,7 +3,7 @@
   - [ ] Make UI look like side panel?
   - [ ] Delete node from panel
   - [ ] multi select all items
-- [ ] store items in a new Map of maps
+- [X] store items in a new Map of maps
   - [mainComponentName]: {id: InstanceNode}[]
 - [ ] Ability to resize the panel
 

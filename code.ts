@@ -1,60 +1,76 @@
-figma.showUI(__html__, { width: 400, height: 500 });
+figma.showUI(__html__, { width: 500, height: 500 });
 
 console.clear();
 
+type Instance = { id: string; txt: string };
+interface List {
+  [key: string]: Instance[];
+}
+
 class BrokenNodes {
-  found: Map<string, InstanceNode>;
+  brokenComponents: Map<string, InstanceNode>;
+  collection: Map<string, Instance[]>;
   constructor() {
-    this.found = new Map();
+    this.brokenComponents = new Map();
+    this.collection = new Map();
+  }
+  #getTopMostParent(node: BaseNode & ChildrenMixin) {
+    let parent = node.parent;
+    while (parent && parent.parent && parent.parent.type !== "PAGE") {
+      parent = parent.parent;
+    }
+    return parent;
+  }
+  #createInstanceName(node: InstanceNode) {
+    const parentName = this.#getTopMostParent(node)?.name;
+    return parentName ? `${parentName} → ${node.name}` : node.name;
   }
   find() {
     const instances = figma.currentPage.findAllWithCriteria<"INSTANCE"[]>({
       types: ["INSTANCE"],
     });
-    this.found.clear();
+    this.brokenComponents.clear();
+    this.collection.clear();
     for (const node of instances) {
-      const parent =
+      const mainComponent =
         node.mainComponent?.parent?.type === "COMPONENT_SET"
-          ? node.mainComponent.parent.parent
+          ? node.mainComponent.parent
           : node.mainComponent;
 
       // component has no parent and is not part of an external library
-      if (!parent && !node.mainComponent?.remote) {
+      if (mainComponent && !mainComponent.parent && !mainComponent.remote) {
         // if (!node.mainComponent?.parent) {
-        this.found.set(node.id, node);
+        this.brokenComponents.set(node.id, node);
+        if (!this.collection.has(mainComponent.name)) {
+          this.collection.set(mainComponent.name, [])
+        }
+        this.collection.get(mainComponent.name)!.push({
+          id: node.id,
+          txt: this.#createInstanceName(node),
+        });
       }
     }
   }
   instance(id: string) {
-    return this.found.get(id);
+    return this.brokenComponents.get(id);
   }
-  get all() {
-    const instances: [string, string][] = [];
-    for (const [id, node] of this.found) {
-      const parentName = getTopMostParent(node)?.name;
-      const name = parentName ? `${parentName} → ${node.name}` : node.name;
-      instances.push([id, name]);
+  get found() {
+    const list: List = {};
+    for (const [componentName, instances] of this.collection) {
+      list[componentName] = instances;
     }
-    return instances;
+    return list;
   }
 }
 
-function getTopMostParent(node: BaseNode & ChildrenMixin) {
-  let parent = node.parent;
-  while (parent && parent.parent && parent.parent.type !== "PAGE") {
-    parent = parent.parent;
-  }
-  return parent;
-}
-
-function sendUpdatedList(found: [string, string][]) {
+function sendUpdatedList(found: List) {
   figma.ui.postMessage({ type: "found", found });
 }
 
 // init
 const brokenNodes = new BrokenNodes();
 brokenNodes.find();
-sendUpdatedList(brokenNodes.all);
+sendUpdatedList(brokenNodes.found);
 
 // listeners
 figma.on("selectionchange", () => {
@@ -65,13 +81,13 @@ figma.on("documentchange", () => {
   console.log("doc change");
   brokenNodes.find();
   figma.ui.postMessage({ type: "user-action" });
-  sendUpdatedList(brokenNodes.all);
+  sendUpdatedList(brokenNodes.found);
 });
 
 figma.on("currentpagechange", () => {
   brokenNodes.find();
   figma.ui.postMessage({ type: "user-action" });
-  sendUpdatedList(brokenNodes.all);
+  sendUpdatedList(brokenNodes.found);
 });
 
 figma.ui.onmessage = (msg) => {
@@ -85,6 +101,6 @@ figma.ui.onmessage = (msg) => {
 
   if (msg.type === "refresh") {
     brokenNodes.find();
-    sendUpdatedList(brokenNodes.all);
+    sendUpdatedList(brokenNodes.found);
   }
 };
