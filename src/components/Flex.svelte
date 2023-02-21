@@ -8,7 +8,7 @@
     | "center"
     | "around"
     | "between"
-    | "evenly" = "evenly";
+    | "evenly" = "start";
   export let gap = "0px";
 
   export let fullWidth = false;

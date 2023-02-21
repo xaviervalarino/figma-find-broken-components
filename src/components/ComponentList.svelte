@@ -24,7 +24,7 @@
   `;
 </script>
 
-<Box paddingTop="xsmall" fullWidth fullHeight>
+<Box paddingTop="xsmall" fullWidth>
   <div class="control">
     <Box>
       <Flex justify="between">
@@ -74,7 +74,7 @@
     padding-left: var(--size-xxsmall);
     padding-right: var(--size-xxsmall);
     border-radius: var(--border-radius-large);
-    margin-right: var(--size-xxxsmall);
+    margin-right: var(--size-xxsmall);
   }
   .broken * {
     fill: var(--figma-color-border-danger-strong) !important;

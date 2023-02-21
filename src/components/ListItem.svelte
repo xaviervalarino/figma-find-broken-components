@@ -59,6 +59,7 @@
     list-style-type: none;
     padding-left: var(--size-medium);
     opacity: inherit;
+    padding-right: var(--size-xxxsmall)
   }
   li:hover {
     /* background: var(--figma-color-bg-component-tertiary); */
