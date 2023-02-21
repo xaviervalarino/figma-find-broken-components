@@ -1,14 +1,19 @@
 <script lang="ts">
-  import ListItem from "./ListItem.svelte";
+  export let loading = false;
+
+  import { Type, Icon, IconSearch } from "figma-plugin-ds-svelte";
+  import Flex from "./Flex.svelte";
+  import Box from "./Box.svelte";
+  import ComponentList from "./ComponentList.svelte";
+  import Loading from "./Loading.svelte";
 
   let foundItems: any = [];
 
-  let loading = true;
   $: if (foundItems) {
-    setTimeout(() => loading = false, 500)
+    setTimeout(() => (loading = false), 500);
   }
 
-  function handleOnMessage(e) {
+  function handleOnMessage(e: MessageEvent) {
     const { type, found } = e.data.pluginMessage;
     if (type === "user-action") {
       console.log("user action");
@@ -16,51 +21,30 @@
       foundItems = [];
     }
     if (type === "found") {
-      console.log("found", found);
-      foundItems = Object.entries(found).map(([key, value]) => {
-        return [key, value];
+      foundItems = Object.entries(found).map(([componentName, instances]) => {
+        return { componentName, instances };
       });
     }
   }
 </script>
 
 <svelte:window on:message={handleOnMessage} />
-<div>
-  {#if loading}
-    <div>Loading...</div>
-  {:else}
-    <ul>
-      {#if !foundItems.length}
-        <div>"🎉 No broken components"</div>
-      {:else}
-        {#each foundItems as [mainComponentName, instances]}
-          <details>
-            <summary
-              ><div>
-                {mainComponentName}<span>{instances.length}</span>
-              </div></summary
-            >
-            <ul>
-              {#each instances as instance}
-                <ListItem {...instance} />
-              {/each}
-            </ul>
-          </details>
-        {/each}
-      {/if}
-    </ul>
-  {/if}
-</div>
-
-<style>
-  summary > div {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 2px;
-  }
-  summary > div > span {
-    background: salmon;
-    padding: 2px 8px;
-    border-radius: 50px;
-  }
-</style>
+{#if loading}
+  <Flex direction="column" justify="center" fullWidth fullHeight>
+    <Loading>
+      <div style="margin-right: -6px">
+        <Icon iconName={IconSearch} />
+      </div>
+      Searching
+    </Loading>
+  </Flex>
+{:else if !foundItems || !foundItems.length}
+  <Flex direction="column" justify="center">
+      🎉
+      <Type size="xlarge" weight="medium">No broken components</Type>
+  </Flex>
+{:else}
+  {#each foundItems as foundItem}
+    <ComponentList {...foundItem} />
+  {/each}
+{/if}

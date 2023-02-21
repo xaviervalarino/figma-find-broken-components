@@ -2,6 +2,18 @@
   export let id: string;
   export let txt: string;
 
+  import {
+    Icon,
+    IconButton,
+    IconInstance,
+    IconHidden,
+    IconTrash,
+    Type,
+  } from "figma-plugin-ds-svelte";
+  import IconLocked from "../icons/locked.svg";
+
+  import Flex from "./Flex.svelte";
+
   let selected = "";
 
   function onClickHandler(e: MouseEvent) {
@@ -10,6 +22,10 @@
       { pluginMessage: { type: "go-to-broken", id: id } },
       "*"
     );
+  }
+
+  function handleHiddenButton() {
+    console.log("clicked hidden icon");
   }
 
   function onMessageHandler(e: MessageEvent) {
@@ -23,22 +39,37 @@
 </script>
 
 <svelte:window on:message={onMessageHandler} />
-<li class:selected={selected === id}>
-  <div>
-    {txt} <button data-id={id} on:click={onClickHandler}>Go to</button>
-  </div>
+<li class="broken" class:selected={selected === id} on:click={onClickHandler}>
+  <Flex justify="between">
+    <Flex>
+      <Icon iconName={IconInstance} color="red" />
+      <Type color="red">{txt}</Type>
+    </Flex>
+    <Flex>
+      <IconButton iconName={IconLocked} on:click={handleHiddenButton} />
+      <IconButton iconName={IconHidden} on:click={handleHiddenButton} />
+      <!-- TODO -->
+      <!-- <IconButton iconName={IconTrash} on:click={handleHiddenButton} /> -->
+    </Flex>
+  </Flex>
 </li>
 
 <style>
   li {
-    padding: 8px;
-    border-top: 1px solid rgba(10, 10, 10, 0.1);
+    list-style-type: none;
+    padding-left: var(--size-medium);
+    opacity: inherit;
+  }
+  li:hover {
+    /* background: var(--figma-color-bg-component-tertiary); */
+    outline: 1px solid var(--figma-color-bg-component-hover);
   }
   li.selected {
-    background: lightblue;
+    background: var(--selection-a);
   }
-  div {
-    display: flex;
-    justify-content: space-between;
+  li.broken {
+    fill: var(--figma-color-border-danger-strong) !important;
+    color: var(--figma-color-border-danger-strong);
+    /* background: var(--figma-color-bg-danger-tertiary); */
   }
 </style>
