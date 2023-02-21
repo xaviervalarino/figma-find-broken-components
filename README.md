@@ -1,11 +1,10 @@
 # Find Broken Components
 A Figma plugin that finds instances of components that have been missing or has been deleted.
 ```
-             This plugin is currently under development and has not been published.
                                                                                         
                                             ██                                          
                                           ██░░██                                        
-  ░░          ░░                        ██░░░░░░██                            ░░░░      
+                                        ██░░░░░░██                                      
                                       ██░░░░░░░░░░██                                    
                                       ██░░░░░░░░░░██                                    
                                     ██░░░░░░░░░░░░░░██                                  
@@ -21,9 +20,10 @@ A Figma plugin that finds instances of components that have been missing or has 
                         ██░░░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░░░██                      
                         ██░░░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░░░██                      
                       ██░░░░░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░░░░░██                    
-        ░░            ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░██                    
+                      ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░██                    
                         ██████████████████████████████████████████                      
                                                                                         
+             This plugin is currently under development and has not been published.
 
 ```
 
