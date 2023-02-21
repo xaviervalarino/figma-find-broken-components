@@ -67,7 +67,7 @@
     opacity: 0;
   }
   span {
-    color: var(--hud);
+    color: var(--figma-color-text-secondary);
     border: 1px solid var(--figma-color-text-secondary);
     padding-top: var(--size-xxxsmall);
     padding-bottom: var(--size-xxxsmall);
