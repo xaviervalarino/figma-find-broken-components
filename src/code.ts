@@ -21,10 +21,32 @@ figma.on("selectionchange", () => {
   figma.ui.postMessage({ type: "selectionchange", selection: selection });
 });
 
-figma.on("documentchange", () => {
-  console.log("doc change");
-  figma.ui.postMessage({ type: "user-action" });
-  getUpdatedList();
+figma.on("documentchange", (e) => {
+  for (const documentChange of e.documentChanges) {
+    // work around since properties isn't typed
+    const type = documentChange.type;
+    const properties = documentChange.properties;
+
+    if (properties) {
+      console.log("properties", properties);
+      const ignoreProps = [
+        "locked",
+        "visible",
+        "relativeTransform",
+        "width",
+        "x",
+        "y",
+      ];
+      const checkIgnore = properties.every((prop: string) => {
+        return !ignoreProps.includes(prop);
+      });
+      if (type === "PROPERTY_CHANGE" && checkIgnore) {
+        console.log("doc change --> updating the list");
+        figma.ui.postMessage({ type: "user-action" });
+        getUpdatedList();
+      }
+    }
+  }
 });
 
 figma.on("currentpagechange", () => {
@@ -33,6 +55,20 @@ figma.on("currentpagechange", () => {
 });
 
 figma.ui.onmessage = (msg) => {
+  if (msg.type === "toggle-locked") {
+    const node = brokenInstances.instance(msg.id);
+    if (node) {
+      node.locked = !node.locked;
+    }
+  }
+  if (msg.type === "toggle-visible") {
+    const node = brokenInstances.instance(msg.id);
+    if (node) {
+      console.log("visible", node.visible);
+      node.visible = !node.visible;
+      console.log("visible after", node.visible);
+    }
+  }
   if (msg.type === "go-to-broken") {
     const node = brokenInstances.instance(msg.id);
     if (node) {

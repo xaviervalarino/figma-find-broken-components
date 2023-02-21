@@ -1,4 +1,10 @@
-type Instance = { id: string; txt: string };
+type Instance = {
+  id: string;
+  txt: string;
+  visible: boolean;
+  locked: boolean;
+};
+
 interface List {
   [key: string]: Instance[];
 }
@@ -51,6 +57,8 @@ export default class BrokenInstances {
         this.collection.get(mainComponent.name)!.push({
           id: node.id,
           txt: this.createInstanceName(node),
+          visible: node.visible,
+          locked: node.locked,
         });
       }
     }
