@@ -39,9 +39,9 @@
     </Loading>
   </Flex>
 {:else if !foundItems || !foundItems.length}
-  <Flex direction="column" justify="center">
-      🎉
-      <Type size="xlarge" weight="medium">No broken components</Type>
+  <Flex direction="column" justify="center" fullHeight fullWidth>
+    <span style="font-size:28px">🎉</span>
+    <Type size="xlarge" weight="medium">No broken components</Type>
   </Flex>
 {:else}
   {#each foundItems as foundItem}
