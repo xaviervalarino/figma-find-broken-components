@@ -1,7 +1,12 @@
 <script lang="ts">
   export let loading = false;
 
-  import { Type, Icon, IconSearch } from "figma-plugin-ds-svelte";
+  import {
+    Type,
+    Icon,
+    IconSearch,
+    OnboardingTip,
+  } from "figma-plugin-ds-svelte";
   import Flex from "./Flex.svelte";
   import Box from "./Box.svelte";
   import ComponentList from "./ComponentList.svelte";

@@ -3,7 +3,7 @@
   import { Icon, IconSpinner, Type } from "figma-plugin-ds-svelte";
   import Box from "./components/Box.svelte";
   import Flex from "./components/Flex.svelte";
-  import List from "./components/List.svelte";
+  import Content from "./components/Content.svelte";
 
   let loading = true;
 </script>
@@ -23,7 +23,7 @@
         {/if}
       </Flex>
     </Box>
-    <List bind:loading />
+    <Content bind:loading />
   </Flex>
 </div>
 
