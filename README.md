@@ -1,5 +1,5 @@
 # Find Broken Components
-A Figma plugin that find component instances with a missing master components
+A Figma plugin that finds instances of components that have been missing or has been deleted.
 ```
              This plugin is currently under development and has not been published.
                                                                                         
