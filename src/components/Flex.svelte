@@ -20,7 +20,6 @@
     justify,
   }).map(([k, v]) => k + "-" + v);
 
-  console.log(classNames);
 </script>
 
 <div
