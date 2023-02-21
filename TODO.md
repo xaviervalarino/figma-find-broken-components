@@ -1,3 +1,6 @@
+- [ ] Fix performance issues when there are a large number of broken instances
+  - [ ] Select listitem lag
+  - [ ] Reload lag when new collection is returned (these two may be related)
 - [ ] Update UI
   - [X] Migrate to Svelte?
   - [X] Make UI look like side panel?
