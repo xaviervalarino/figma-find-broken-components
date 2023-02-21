@@ -43,7 +43,9 @@
   <Flex justify="between">
     <Flex>
       <Icon iconName={IconInstance} color="red" />
-      <Type color="red">{txt}</Type>
+      <div style="pointer-events:none">
+        <Type color="red">{txt}</Type>
+      </div>
     </Flex>
     <Flex>
       <IconButton iconName={IconLocked} on:click={handleHiddenButton} />
