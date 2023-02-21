@@ -1,10 +1,15 @@
 - [ ] Update UI
-  - [ ] Migrate to Svelte?
-  - [ ] Make UI look like side panel?
+  - [X] Migrate to Svelte?
+  - [X] Make UI look like side panel?
   - [ ] Delete node from panel
   - [ ] multi select all items
 - [X] store items in a new Map of maps
   - [mainComponentName]: {id: InstanceNode}[]
+- [ ] Next broken components by the top level component set they are inside, or the topmost frame
+  - Essentially three tiers
+    -  The broken component [count]
+      - Topmost component set or topmost frame
+        - Broken component instance
 - [ ] Ability to resize the panel
 
 - [ ] Explore ideas
