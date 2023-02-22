@@ -22,28 +22,28 @@ figma.on("selectionchange", () => {
 });
 
 figma.on("documentchange", (e) => {
-  for (const documentChange of e.documentChanges) {
-    // work around since properties isn't typed
-    const type = documentChange.type;
-    const properties = documentChange.properties;
+  for (const change of e.documentChanges) {
+    if (change.type === 'PROPERTY_CHANGE') {
+      const { type, properties } = change;
 
-    if (properties) {
-      console.log("properties", properties);
-      const ignoreProps = [
-        "locked",
-        "visible",
-        "relativeTransform",
-        "width",
-        "x",
-        "y",
-      ];
-      const checkIgnore = properties.every((prop: string) => {
-        return !ignoreProps.includes(prop);
-      });
-      if (type === "PROPERTY_CHANGE" && checkIgnore) {
-        console.log("doc change --> updating the list");
-        figma.ui.postMessage({ type: "user-action" });
-        getUpdatedList();
+      if (properties) {
+        console.log("properties", properties);
+        const ignoreProps = [
+          "locked",
+          "visible",
+          "relativeTransform",
+          "width",
+          "x",
+          "y",
+        ];
+        const checkIgnore = properties.every((prop: string) => {
+          return !ignoreProps.includes(prop);
+        });
+        if (type === "PROPERTY_CHANGE" && checkIgnore) {
+          console.log("doc change --> updating the list");
+          figma.ui.postMessage({ type: "user-action" });
+          getUpdatedList();
+        }
       }
     }
   }
