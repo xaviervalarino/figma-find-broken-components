@@ -2,10 +2,27 @@
 
 import fs from "fs";
 import esbuild from "esbuild";
-import path from "path";
-import { cwd } from "process";
 
 const args = process.argv.slice(2);
+
+// reload scripts
+const reloadSandboxScript = `
+async function getCode() {
+  const got = await fetch("http://localhost:8000/code.js");
+  const file = await got.text();
+  // console.clear();
+  new Function("__html__", file)(__html__);
+}
+function onMessageWrapper(onmessageFn) {
+  return (msg) => {
+    if (onmessageFn) onmessageFn(msg);
+    if (msg === "reload sandbox") {
+      console.log("reloading sandbox");
+      getCode(); }
+  };
+}
+figma.ui.onmessage = onMessageWrapper(figma.ui.onmessage);
+`;
 
 //make sure the directory exists
 if (!fs.existsSync("./dist/")) {
@@ -13,26 +30,21 @@ if (!fs.existsSync("./dist/")) {
 }
 
 if (args.includes("--watch")) {
-  const __dirname = path.dirname(new URL(import.meta.url).pathname);
-  const srcReloadFile = path.join(__dirname, "./assets/reload-main-thread.js");
-  const destReloadFile = path.join(cwd(), "./dist/code.js");
-
-  fs.copyFileSync(srcReloadFile, destReloadFile);
-
   let ctx = await esbuild.context({
     entryPoints: ["./src/code.ts"],
     bundle: true,
     color: true,
     logLevel: "info",
-    outfile: "./dist/code.remote.js",
+    outfile: "./dist/code.js",
     mainFields: ["module", "main"],
     minify: false,
     platform: "node",
     sourcemap: "inline",
+    footer: { js: reloadSandboxScript },
   });
 
   await ctx.watch();
-  let { host, port } = await ctx.serve({
+  await ctx.serve({
     servedir: "./dist",
   });
 }
