@@ -17,29 +17,34 @@
     </style>
   </head>
   <body>
-    <!-- <script type="text/javascript">
-      console.log("starting websocket");
-      const socket = new WebSocket("ws://localhost:8080");
-      socket.addEventListener("open", (event) => {
-        socket.send("Hello Server");
-      });
-      socket.addEventListener("message", (event) => {
-        console.log("Message from server ", event.data);
-      });
-    </script> -->
-
-    <iframe src="http://localhost:8000/iframe.html"></iframe>
     <script>
-      const iframe = document.querySelector("iframe");
-      onmessage = (event) => {
-        if (event.origin === "https://www.figma.com") {
-          console.log("UI -> plugin code msg: ", event);
-          iframe.contentWindow.postMessage({ ...event.data }, "*");
+      if (window.location.host === "localhost:8000") {
+        const socket = new WebSocket("ws://localhost:8081");
+        socket.addEventListener("open", () => {
+          socket.send("Hello Server");
+        });
+        socket.addEventListener("message", (msg) => {
+          const { event, file } = JSON.parse(msg.data);
+          console.log("message", msg);
+          if (event === "reload" && file === "ui.html") {
+            console.log("reloading");
+            window.location.reload();
+          }
+        });
+      } else {
+        const iframe = document.createElement("iframe");
+        iframe.src = "http://localhost:8000/ui.html";
+        document.body.appendChild(iframe);
+      }
+      new EventSource("http://localhost:8000/esbuild").addEventListener(
+        "change",
+        (event) => {
+          const { updated } = JSON.parse(event.data);
+          if (updated.includes("/code.remote.js")) {
+            parent.postMessage({ pluginMessage: "reload sandbox" }, "*");
+          }
         }
-        if (event.origin === "http://localhost:8000") {
-          parent.postMessage(event.data, "*");
-        }
-      };
+      );
     </script>
   </body>
 </html>
