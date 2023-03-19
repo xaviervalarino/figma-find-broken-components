@@ -1,7 +1,6 @@
 import BrokenInstances from "./modules/broken-instances";
-figma.showUI(__html__, { width: 400, height: 400, themeColors: true });
 
-console.clear();
+figma.showUI(__html__, { width: 400, height: 400, themeColors: true });
 
 // init
 const brokenInstances = new BrokenInstances();
@@ -23,7 +22,7 @@ figma.on("selectionchange", () => {
 
 figma.on("documentchange", (e) => {
   for (const change of e.documentChanges) {
-    if (change.type === 'PROPERTY_CHANGE') {
+    if (change.type === "PROPERTY_CHANGE") {
       const { type, properties } = change;
 
       if (properties) {
@@ -60,24 +59,22 @@ figma.ui.onmessage = (msg) => {
     if (node) {
       node.locked = !node.locked;
     }
-  }
-  if (msg.type === "toggle-visible") {
+  } else if (msg.type === "toggle-visible") {
     const node = brokenInstances.instance(msg.id);
     if (node) {
       console.log("visible", node.visible);
       node.visible = !node.visible;
       console.log("visible after", node.visible);
     }
-  }
-  if (msg.type === "go-to-broken") {
+  } else if (msg.type === "go-to-broken") {
     const node = brokenInstances.instance(msg.id);
     if (node) {
       figma.viewport.scrollAndZoomIntoView([node]);
       figma.currentPage.selection = [node];
     }
-  }
-
-  if (msg.type === "refresh") {
+  } else if (msg.type === "refresh") {
     getUpdatedList();
+  } else {
+    console.log("got message from UI: ", msg);
   }
 };

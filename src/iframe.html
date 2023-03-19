@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>iframe</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        background: salmon;
+        font-family: sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>iframe</h1>
+    <div>content and stuff</div>
+    <pre></pre>
+    <script>
+      onmessage = (event) => {
+        console.log("iframe -> plugin code msg: ", event);
+        document.querySelector("pre").textContent = JSON.stringify(
+          event.data,
+          null,
+          2
+        );
+        parent.postMessage({ pluginMessage: "sent from iframe" }, "*");
+      };
+    </script>
+  </body>
+</html>
