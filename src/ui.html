@@ -4,6 +4,7 @@
     <title>Test Socket</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="http://localhost:8000/main.css" />
     <style>
       html,
       body {
@@ -18,16 +19,15 @@
   </head>
   <body>
     <script>
+      const es = new EventSource("http://localhost:8000/esbuild");
       if (window.location.host === "localhost:8000") {
-        const socket = new WebSocket("ws://localhost:8081");
-        socket.addEventListener("open", () => {
-          socket.send("Hello Server");
-        });
-        socket.addEventListener("message", (msg) => {
-          const { event, file } = JSON.parse(msg.data);
-          console.log("message", msg);
-          if (event === "reload" && file === "ui.html") {
-            console.log("reloading");
+        const script = document.createElement("script");
+        script.src = "http://localhost:8000/main.js";
+        document.body.appendChild(script);
+
+        es.addEventListener("change", ({ data }) => {
+          const { updated } = JSON.parse(data);
+          if (updated.includes("/main.js")) {
             window.location.reload();
           }
         });
@@ -35,16 +35,14 @@
         const iframe = document.createElement("iframe");
         iframe.src = "http://localhost:8000/ui.html";
         document.body.appendChild(iframe);
-      }
-      new EventSource("http://localhost:8000/esbuild").addEventListener(
-        "change",
-        (event) => {
-          const { updated } = JSON.parse(event.data);
+
+        es.addEventListener("change", ({ data }) => {
+          const { updated } = JSON.parse(data);
           if (updated.includes("/code.js")) {
             parent.postMessage({ pluginMessage: "reload sandbox" }, "*");
           }
-        }
-      );
+        });
+      }
     </script>
   </body>
 </html>

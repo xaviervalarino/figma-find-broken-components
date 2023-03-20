@@ -2,15 +2,17 @@
 
 import fs from "fs";
 import esbuild from "esbuild";
+import esbuildSvelte from "esbuild-svelte";
+import sveltePreprocess from "svelte-preprocess";
 
 const args = process.argv.slice(2);
 
-// reload scripts
-const reloadSandboxScript = `
+const reloadSandboxScript = (host) => `
+// reload script
 async function getCode() {
-  const got = await fetch("http://localhost:8000/code.js");
+  const got = await fetch("${host}/code.js");
   const file = await got.text();
-  // console.clear();
+  console.clear()
   new Function("__html__", file)(__html__);
 }
 function onMessageWrapper(onmessageFn) {
@@ -24,6 +26,22 @@ function onMessageWrapper(onmessageFn) {
 figma.ui.onmessage = onMessageWrapper(figma.ui.onmessage);
 `;
 
+function injectSandboxReload(filter) {
+  return {
+    name: "injectSandboxReload",
+    setup(build) {
+      build.onLoad({ filter }, async (args) => {
+        const contents = await fs.promises.readFile(args.path, "utf8");
+        const script = reloadSandboxScript("http://localhost:8000");
+        return {
+          contents: contents.concat(script),
+          loader: "ts",
+        };
+      });
+    },
+  };
+}
+
 //make sure the directory exists
 if (!fs.existsSync("./dist/")) {
   fs.mkdirSync("./dist/");
@@ -31,20 +49,32 @@ if (!fs.existsSync("./dist/")) {
 
 if (args.includes("--watch")) {
   let ctx = await esbuild.context({
-    entryPoints: ["./src/code.ts"],
+    entryPoints: ["./src/code.ts", "./src/main.ts"],
     bundle: true,
     color: true,
     logLevel: "info",
-    outfile: "./dist/code.js",
-    mainFields: ["module", "main"],
+    // logLevel: "silent",
+    outdir: "./dist/",
+    mainFields: ["svelte", "browser", "module", "main"],
     minify: false,
-    platform: "node",
+    // platform: "node",
     sourcemap: "inline",
-    footer: { js: reloadSandboxScript },
+    loader: { ".svg": "text" },
+    // footer: { js: reloadSandboxScript },
+    plugins: [
+      esbuildSvelte({
+        preprocess: sveltePreprocess(),
+      }),
+      injectSandboxReload(/code\.ts$/),
+    ],
   });
 
   await ctx.watch();
-  await ctx.serve({
+  // TODO: update host when these promises resolve?
+  const { host, port } = await ctx.serve({
     servedir: "./dist",
+  });
+  Promise.allSettled([host, port]).then((res) => {
+    console.log("RESOLVED ", res);
   });
 }
