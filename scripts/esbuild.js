@@ -53,14 +53,11 @@ if (args.includes("--watch")) {
     bundle: true,
     color: true,
     logLevel: "info",
-    // logLevel: "silent",
     outdir: "./dist/",
     mainFields: ["svelte", "browser", "module", "main"],
     minify: false,
-    // platform: "node",
     sourcemap: "inline",
     loader: { ".svg": "text" },
-    // footer: { js: reloadSandboxScript },
     plugins: [
       esbuildSvelte({
         preprocess: sveltePreprocess(),
