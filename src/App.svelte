@@ -33,5 +33,6 @@
   }
   .main {
     margin: 2px;
+    height: 100%;
   }
 </style>
