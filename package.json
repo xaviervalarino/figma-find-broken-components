@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "echo 'Still need to build this out'",
-    "watch": "./scripts/esbuild.js --watch",
+    "watch": "./esbuild.js --watch",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
   },
