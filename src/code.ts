@@ -27,14 +27,7 @@ figma.on("documentchange", (e) => {
 
       if (properties) {
         console.log("properties", properties);
-        const ignoreProps = [
-          "locked",
-          "visible",
-          "relativeTransform",
-          "width",
-          "x",
-          "y",
-        ];
+        const ignoreProps = ["locked", "visible", "relativeTransform", "width", "x", "y"];
         const checkIgnore = properties.every((prop: string) => {
           return !ignoreProps.includes(prop);
         });
