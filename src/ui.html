@@ -36,6 +36,17 @@
         iframe.src = "http://localhost:8000/ui.html";
         document.body.appendChild(iframe);
 
+        // pass messages between iframe and figma
+        onmessage = (event) => {
+          if (event.origin === "https://www.figma.com") {
+            iframe.contentWindow.postMessage({ ...event.data }, "*");
+          }
+          if (event.origin === "http://localhost:8000") {
+            parent.postMessage(event.data, "*");
+          }
+        };
+
+        // reload sandbox when the file changes
         es.addEventListener("change", ({ data }) => {
           const { updated } = JSON.parse(data);
           if (updated.includes("/code.js")) {
