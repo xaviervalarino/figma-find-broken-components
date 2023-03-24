@@ -17,7 +17,9 @@
       fullWidth
     >
       <Flex justify="between" align="center">
-        <Type size="xlarge" weight="medium">Found on Current Page</Type>
+        <Box paddingTop="xxsmall" paddingBottom="xxsmall">
+          <Type size="xlarge" weight="medium">Found on Current Page</Type>
+        </Box>
         {#if loading}
           <Icon iconName={IconSpinner} spin />
         {/if}
