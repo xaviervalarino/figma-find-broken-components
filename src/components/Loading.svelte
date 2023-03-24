@@ -1,11 +1,11 @@
 <script lang="ts">
   import { Type } from "figma-plugin-ds-svelte";
-  import Flex from "./Flex.svelte";
+  import Flex from "../ui/Flex.svelte";
 </script>
 
 <Type size="xlarge">
   <Flex>
-  <slot /><span class="dots"><span>.</span><span>.</span><span>.</span></span>
+    <slot /><span class="dots"><span>.</span><span>.</span><span>.</span></span>
   </Flex>
 </Type>
 
@@ -22,7 +22,7 @@
     to   { opacity: 1; }  66% {opacity: .6; }
     to   { opacity: .6; } 100% {opacity: 0; }
   }
-  
+
   /* prettier-ignore */
   @keyframes dots-3 {
     from { opacity: 0; }  66% { opacity: 1; }

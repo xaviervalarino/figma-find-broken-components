@@ -29,14 +29,14 @@
   }
 
   function handleLockedButton() {
-    locked = !locked
+    locked = !locked;
     parent.postMessage(
       { pluginMessage: { type: "toggle-locked", id: id } },
       "*"
     );
   }
   function handleVisibilityButton() {
-    visible = !visible
+    visible = !visible;
     parent.postMessage(
       { pluginMessage: { type: "toggle-visible", id: id } },
       "*"
@@ -70,7 +70,10 @@
         />
       </div>
       <div class:hide={visible}>
-        <IconButton iconName={visible? IconVisible : IconHidden} on:click={handleVisibilityButton} />
+        <IconButton
+          iconName={visible ? IconVisible : IconHidden}
+          on:click={handleVisibilityButton}
+        />
       </div>
       <!-- TODO -->
       <!-- <IconButton iconName={IconTrash} on:click={handleHiddenButton} /> -->
