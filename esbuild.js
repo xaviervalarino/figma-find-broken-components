@@ -71,7 +71,4 @@ if (args.includes("--watch")) {
   const { host, port } = await ctx.serve({
     servedir: "./dist",
   });
-  Promise.allSettled([host, port]).then((res) => {
-    console.log("RESOLVED ", res);
-  });
 }
