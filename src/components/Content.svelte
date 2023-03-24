@@ -12,9 +12,13 @@
   import ComponentList from "./ComponentList.svelte";
   import Loading from "./Loading.svelte";
 
-  let foundItems: any = [];
+  const storage = sessionStorage.getItem("foundItems");
+  let foundItems: any = storage ? JSON.parse(storage) : [];
 
   $: if (foundItems) {
+    if (foundItems.length) {
+      sessionStorage.setItem("foundItems", JSON.stringify(foundItems));
+    }
     setTimeout(() => (loading = false), 500);
   }
 
