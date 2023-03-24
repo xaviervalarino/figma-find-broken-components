@@ -16,7 +16,7 @@
   import IconLocked from "../icons/locked.svg";
   import IconUnlocked from "../icons/unlocked.svg";
 
-  import Flex from "./Flex.svelte";
+  import Flex from "../ui/Flex.svelte";
 
   let selected = "";
 

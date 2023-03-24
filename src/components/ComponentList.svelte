@@ -15,8 +15,8 @@
     IconComponent,
     Type,
   } from "figma-plugin-ds-svelte";
-  import Box from "./Box.svelte";
-  import Flex from "./Flex.svelte";
+  import Box from "../ui/Box.svelte";
+  import Flex from "../ui/Flex.svelte";
   import ListItem from "./ListItem.svelte";
 
   let closed = false;

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { GlobalCSS } from "figma-plugin-ds-svelte";
   import { Icon, IconSpinner, Type } from "figma-plugin-ds-svelte";
-  import Box from "./components/Box.svelte";
-  import Flex from "./components/Flex.svelte";
+  import Box from "./ui/Box.svelte";
+  import Flex from "./ui/Flex.svelte";
   import Content from "./components/Content.svelte";
 
   let loading = true;

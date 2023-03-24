@@ -7,8 +7,8 @@
     IconSearch,
     OnboardingTip,
   } from "figma-plugin-ds-svelte";
-  import Flex from "./Flex.svelte";
-  import Box from "./Box.svelte";
+  import Flex from "../ui/Flex.svelte";
+  import Box from "../ui/Box.svelte";
   import ComponentList from "./ComponentList.svelte";
   import Loading from "./Loading.svelte";
 
@@ -17,6 +17,7 @@
 
   $: if (foundItems) {
     if (foundItems.length) {
+      console.log(foundItems);
       sessionStorage.setItem("foundItems", JSON.stringify(foundItems));
     }
     setTimeout(() => (loading = false), 500);
