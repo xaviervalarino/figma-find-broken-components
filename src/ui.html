@@ -29,7 +29,7 @@
         onmessage = (event) => {
           if (event.data.msg === "parent styles") {
             for (const styleStr of event.data.styles) {
-              document.head.insertAdjacentHTML('beforeend', styleStr);
+              document.head.insertAdjacentHTML("beforeend", styleStr);
             }
           }
         };
