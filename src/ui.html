@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="http://localhost:8000/main.css" />
-    <style>
+    <style id="iframe-parent">
       html,
       body {
         margin: 0;
@@ -25,6 +25,16 @@
         script.src = "http://localhost:8000/main.js";
         document.body.appendChild(script);
 
+        // load in Figma specific stylesheets which were serialized to strings
+        onmessage = (event) => {
+          if (event.data.msg === "parent styles") {
+            for (const styleStr of event.data.styles) {
+              document.head.insertAdjacentHTML('beforeend', styleStr);
+            }
+          }
+        };
+
+        // reload when sandbox code is updated
         es.addEventListener("change", ({ data }) => {
           const { updated } = JSON.parse(data);
           if (updated.includes("/main.js")) {
@@ -35,6 +45,16 @@
         const iframe = document.createElement("iframe");
         iframe.src = "http://localhost:8000/ui.html";
         document.body.appendChild(iframe);
+
+        // pass Figma stylesheets to iframe
+        iframe.addEventListener("load", () => {
+          let styles = [];
+          const serializer = new XMLSerializer();
+          for (const style of document.getElementsByTagName("style")) {
+            if (style.id !== "iframe-parent") styles.push(serializer.serializeToString(style));
+          }
+          iframe.contentWindow.postMessage({ msg: "parent styles", styles }, "*");
+        });
 
         // pass messages between iframe and figma
         onmessage = (event) => {
