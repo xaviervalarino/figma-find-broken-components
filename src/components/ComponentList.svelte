@@ -1,6 +1,11 @@
 <script lang="ts">
   export let componentName: string;
-  export let instances: { txt: string; id: string }[];
+  export let instances: {
+    txt: string;
+    id: string;
+    visible: boolean;
+    locked: boolean;
+  }[];
 
   import {
     Icon,
