@@ -53,7 +53,11 @@
           for (const style of document.getElementsByTagName("style")) {
             if (style.id !== "iframe-parent") styles.push(serializer.serializeToString(style));
           }
-          iframe.contentWindow.postMessage({ msg: "parent styles", styles }, "*");
+          // stop unwanted errors in plugin code by sending empty pluginMessage object
+          iframe.contentWindow.postMessage(
+            { msg: "parent styles", styles, pluginMessage: {} },
+            "*"
+          );
         });
 
         // pass messages between iframe and figma
